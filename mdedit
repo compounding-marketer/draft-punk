@@ -1,0 +1,32 @@
+#!/bin/bash
+# mdedit — open a Markdown file in the local Draft Punk.
+#
+#   mdedit                       open the editor's file picker
+#   mdedit notes.md              open a file (relative or absolute path)
+#   mdedit ~/Desktop/plan.md     open a file anywhere on the Mac
+#
+# Install once:  ln -sf "$PWD/md-editor/mdedit" /usr/local/bin/mdedit
+
+DIR="$(cd "$(dirname "$(readlink "$0" || echo "$0")")" && pwd)"
+PORT=8787
+
+if ! curl -s -o /dev/null "http://localhost:$PORT/" 2>/dev/null; then
+  nohup python3 "$DIR/server.py" > "$DIR/server.log" 2>&1 &
+  for _ in $(seq 1 20); do
+    curl -s -o /dev/null "http://localhost:$PORT/" 2>/dev/null && break
+    sleep 0.25
+  done
+fi
+
+if [ -n "$1" ]; then
+  # Resolve to an absolute path so the server gets an unambiguous target.
+  case "$1" in
+    /*) ABS="$1" ;;
+    ~*) ABS="${1/#\~/$HOME}" ;;
+    *)  ABS="$PWD/$1" ;;
+  esac
+  ENC=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1]))' "$ABS")
+  open "http://localhost:$PORT/?file=$ENC"
+else
+  open "http://localhost:$PORT/"
+fi
