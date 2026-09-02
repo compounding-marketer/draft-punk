@@ -6,10 +6,18 @@ plus one HTML file. Your file is read and written locally and never sent anywher
 
 ![Draft Punk in Read mode, dark theme](docs/screenshot.png)
 
+## Try it without installing anything
+
+**[compounding-marketer.github.io/draft-punk](https://compounding-marketer.github.io/draft-punk/)**
+
+Opens in the browser, reads and writes files on your own disk, nothing to download.
+Chrome, Edge, Arc, and Brave can save back to the original file; Safari and Firefox
+open it read-only and download a copy on save.
+
 ## Getting started
 
-The **browser build works anywhere** — download `share/draft-punk.html` and open it
-in Chrome, Edge, Arc, or Brave. No server, no Python, no install.
+The **browser build works anywhere** — use the link above, or download
+`share/draft-punk.html` and open it locally. No server, no Python, no install.
 
 The **server build** needs Python 3 (already present on macOS and most Linux
 distros). The `.app` bundle for Finder integration is macOS-only.
