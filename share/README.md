@@ -41,7 +41,13 @@ Saving back to the original file uses the File System Access API:
 
 ## Privacy
 
-There is no backend. Nothing is uploaded, logged, or tracked. Sticky notes live
-in your browser's local storage. The only network request is to Google Fonts for
-the typefaces — and if that's blocked, the app falls back to system fonts and
-works exactly the same.
+There is no backend and your file never leaves your computer — it is read and
+written directly by the browser, never sent anywhere. Sticky notes live in your
+browser's local storage.
+
+Two honest caveats. The page requests typefaces from **Google Fonts**; if that's
+blocked, it falls back to system fonts and works exactly the same. And if you're
+using the **hosted** version rather than a downloaded copy, GitHub serves the page
+and logs that request the way any website does. Neither one can see your file —
+that stays local either way. Download the file if you'd rather make no network
+request at all.

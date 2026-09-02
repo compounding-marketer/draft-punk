@@ -2,7 +2,7 @@
 
 A local Markdown viewer and editor. Opens any `.md` file on your disk and shows it
 properly formatted, with editing and save-to-disk. No dependencies — stdlib Python
-plus one HTML file. Nothing is uploaded, logged, or tracked.
+plus one HTML file. Your file is read and written locally and never sent anywhere.
 
 ![Draft Punk in Read mode, dark theme](docs/screenshot.png)
 
