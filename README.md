@@ -1,13 +1,18 @@
 # Draft Punk
 
-A local Markdown viewer and editor. Opens any `.md` file anywhere on your Mac and
-shows it nicely formatted, with editing and save-to-disk. No dependencies — stdlib
-Python plus one HTML file.
+A local Markdown viewer and editor. Opens any `.md` file on your disk and shows it
+properly formatted, with editing and save-to-disk. No dependencies — stdlib Python
+plus one HTML file. Nothing is uploaded, logged, or tracked.
+
+![Draft Punk in Read mode, dark theme](docs/screenshot.png)
 
 ## Getting started
 
-Requires macOS with Python 3 (already present on every modern Mac). Nothing to
-install.
+The **browser build works anywhere** — download `share/draft-punk.html` and open it
+in Chrome, Edge, Arc, or Brave. No server, no Python, no install.
+
+The **server build** needs Python 3 (already present on macOS and most Linux
+distros). The `.app` bundle for Finder integration is macOS-only.
 
 ```bash
 git clone https://github.com/compounding-marketer/draft-punk.git
@@ -98,7 +103,15 @@ you like. A moved *copy* loses track of `server.py`; an alias doesn't.
 Editing `index.html` changes the app immediately — just reload the window. If you
 change `server.py`, restart the server.
 
-**From the terminal**, optionally install the `mdedit` command:
+**From the terminal**, optionally install the `mdedit` command so you can open a
+file from anywhere:
+
+```bash
+sudo ln -sf "$PWD/mdedit" /usr/local/bin/mdedit
+```
+
+Then `mdedit notes.md`, or `mdedit` on its own for the file picker. If you'd rather
+not use `sudo`, symlink it into any directory already on your `PATH`.
 
 ## Making it the default app for .md files
 

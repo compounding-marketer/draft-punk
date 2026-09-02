@@ -5,7 +5,7 @@
 #   mdedit notes.md              open a file (relative or absolute path)
 #   mdedit ~/Desktop/plan.md     open a file anywhere on the Mac
 #
-# Install once:  ln -sf "$PWD/md-editor/mdedit" /usr/local/bin/mdedit
+# Install once:  sudo ln -sf "$PWD/mdedit" /usr/local/bin/mdedit
 
 DIR="$(cd "$(dirname "$(readlink "$0" || echo "$0")")" && pwd)"
 PORT=8787
