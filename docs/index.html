@@ -1,0 +1,1330 @@
+<meta charset="utf-8">
+<title>Draft Punk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Geist:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Draft Punk design system, applied to the editor.
+     Dark is the native mode; light is the "Paper" variant.
+     Flat throughout: no gradients, no shadows, no glows.
+     ============================================================ */
+  /* ==========================================================================
+     THEMES.  Two independent axes:
+       data-theme  — the visual identity (punk / blueprint / …)
+       data-mode   — dark or light within that identity
+     Every theme sets the same token names, so the rest of the sheet never
+     needs to know which one is active.
+     ========================================================================== */
+  :root {
+    --sidebar-w: 320px;
+    /* typography + shape, overridden per theme */
+    --f-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --f-body: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --h-weight: 400;
+    --h-track: -0.02em;
+    --r-sm: 5px;
+    --r-md: 8px;
+    --r-pill: 100px;
+    --bw: 1px;
+    --grid-size: 60px;
+  }
+
+  /* ---------------- Draft Punk — the house brand (v1.3) ---------------- */
+  :root[data-theme="punk"] {
+    --bg: #0F0F0F;
+    --bg-card: #141414;
+    --bg-elevated: #1A1A1A;
+    --ink: #FAFAFA;
+    --ink-dim: #8A8A8A;
+    --ink-dimmer: #5A5A5A;      /* decorative only: icons, markers, rules */
+    --ink-meta: #828282;        /* small UI text — lifted to clear WCAG AA */
+    --ink-inverted: #0F0F0F;
+    --accent: #D4FF3A;          /* decorative lime: dot, bars, pills */
+    --accent-ink: #D4FF3A;      /* lime as TEXT — safe on near-black */
+    --border: rgba(250, 250, 250, 0.08);
+    --border-bright: rgba(250, 250, 250, 0.18);
+    --grid: rgba(250, 250, 250, 0.022);
+    --code-bg: #1A1A1A;
+    --danger: #FF5555;
+  }
+  :root[data-theme="punk"][data-mode="light"] {
+    --bg: #F5F5F0;
+    --bg-card: #EDEDE6;
+    --bg-elevated: #E4E4DB;
+    --ink: #0F0F0F;
+    --ink-dim: #4A4A46;
+    --ink-dimmer: #7A7A72;
+    --ink-meta: #5F5F58;
+    --ink-inverted: #0F0F0F;
+    --accent: #D4FF3A;
+    --accent-ink: #4A6600;      /* lime fails as text on paper — darken it */
+    --border: rgba(15, 15, 15, 0.10);
+    --border-bright: rgba(15, 15, 15, 0.24);
+    --grid: rgba(15, 15, 15, 0.028);
+    --code-bg: #E4E4DB;
+    --danger: #C22B2B;
+  }
+
+  /* ---------------- Blueprint — bold straight sans, electric blue ----------------
+     Squared geometry instead of pills, heavier 1.5px rules, and a tighter
+     graph-paper grid. Headings are Space Grotesk 700 with tight tracking. */
+  :root[data-theme="blueprint"] {
+    --f-display: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    --f-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --h-weight: 700;
+    --h-track: -0.035em;
+    --r-sm: 3px;
+    --r-md: 4px;
+    --r-pill: 4px;
+    --bw: 1.5px;
+    --grid-size: 24px;
+    --bg: #0A0E1A;
+    --bg-card: #101728;
+    --bg-elevated: #17203A;
+    --ink: #E8EDF7;
+    --ink-dim: #9BADCC;
+    --ink-dimmer: #5A6B8C;
+    --ink-meta: #93A5C4;
+    --ink-inverted: #FFFFFF;    /* white sits on the blue fill */
+    --accent: #2B4CFF;
+    --accent-ink: #8AA0FF;      /* lifted so blue clears AA on navy */
+    --border: rgba(232, 237, 247, 0.12);
+    --border-bright: rgba(232, 237, 247, 0.26);
+    --grid: rgba(138, 160, 255, 0.055);
+    --code-bg: #17203A;
+    --danger: #FF5C6E;
+  }
+  /* ---------------- Manuscript — warm paper, serif body, rust accent ----------------
+     Built for long reading rather than scanning: a serif body face, looser
+     leading, softer edges, and no grid behind the page. */
+  :root[data-theme="manuscript"] {
+    --f-display: 'Fraunces', Georgia, serif;
+    --f-body: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --h-weight: 600;
+    --h-track: -0.015em;
+    --r-sm: 6px;
+    --r-md: 12px;
+    --r-pill: 100px;
+    --bw: 1px;
+    --grid-size: 0px;           /* no graph paper — this one is a page */
+    --bg: #191512;
+    --bg-card: #211C18;
+    --bg-elevated: #2A241E;
+    --ink: #F2EADE;
+    --ink-dim: #A79B8B;
+    --ink-dimmer: #6E6558;
+    --ink-meta: #9A8F80;
+    --ink-inverted: #191512;
+    --accent: #E0763C;
+    --accent-ink: #F0996A;
+    --border: rgba(242, 234, 222, 0.11);
+    --border-bright: rgba(242, 234, 222, 0.24);
+    --grid: transparent;
+    --code-bg: #2A241E;
+    --danger: #E4635E;
+  }
+  :root[data-theme="manuscript"][data-mode="light"] {
+    --bg: #FBF6EC;
+    --bg-card: #F2EADB;
+    --bg-elevated: #E9DFCC;
+    --ink: #221C15;
+    --ink-dim: #574C3E;
+    --ink-dimmer: #8C8071;
+    --ink-meta: #6B5F50;
+    --ink-inverted: #FBF6EC;
+    --accent: #B4531F;
+    --accent-ink: #9A4416;
+    --border: rgba(34, 28, 21, 0.13);
+    --border-bright: rgba(34, 28, 21, 0.28);
+    --grid: transparent;
+    --code-bg: #E9DFCC;
+    --danger: #B33A33;
+  }
+
+  :root[data-theme="blueprint"][data-mode="light"] {
+    --bg: #F4F6FB;
+    --bg-card: #E9EEF8;
+    --bg-elevated: #DCE4F3;
+    --ink: #0A0E1A;
+    --ink-dim: #3D4A63;
+    --ink-dimmer: #8595B0;
+    --ink-meta: #4F5D78;
+    --ink-inverted: #FFFFFF;
+    --accent: #1B32E8;
+    --accent-ink: #1B32E8;
+    --border: rgba(10, 14, 26, 0.13);
+    --border-bright: rgba(10, 14, 26, 0.28);
+    --grid: rgba(27, 50, 232, 0.055);
+    --code-bg: #DCE4F3;
+    --danger: #C22B2B;
+  }
+  /* Paper. Lime stays decorative here — as TEXT it would fail on off-white,
+     so accent-ink darkens to a deep olive from the same family. */
+  
+
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: rgba(212, 255, 58, 0.28); color: var(--ink); }
+  :root[data-mode="light"] ::selection { background: rgba(212, 255, 58, 0.55); }
+
+  body {
+    font-family: var(--f-body);
+    background: var(--bg); color: var(--ink);
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- chrome ---------- */
+  header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 18px; flex-shrink: 0;
+    background: var(--bg-card); border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-dim); white-space: nowrap;
+  }
+  .brand .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  #filename {
+    font-family: var(--f-mono);
+    font-size: 11.5px; letter-spacing: 0.02em; color: var(--ink-meta);
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  #dirty {
+    display: none; color: var(--ink-inverted); background: var(--accent);
+    font-family: var(--f-mono);
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+    padding: 3px 8px; border-radius: var(--r-pill); white-space: nowrap;
+  }
+  #status {
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-meta); white-space: nowrap;
+  }
+
+  button {
+    font-family: var(--f-mono);
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 7px 13px; border-radius: var(--r-md);
+    border: 1px solid var(--border); background: transparent; color: var(--ink-dim);
+    cursor: pointer; white-space: nowrap; transition: color .15s, border-color .15s, background .15s;
+  }
+  button:hover { color: var(--ink); border-color: var(--border-bright); }
+  /* The one lime CTA, straight from the template system's pill. */
+  #saveBtn {
+    background: var(--accent); border-color: var(--accent); color: var(--ink-inverted);
+    font-weight: 600; border-radius: var(--r-pill); padding: 7px 16px;
+  }
+  #saveBtn:hover { background: #E2FF6B; border-color: #E2FF6B; color: var(--ink-inverted); }
+  #pickBtn { color: var(--ink); }
+  #themeBtn, #filesBtn { padding: 7px 10px; font-size: 12px; letter-spacing: 0; }
+
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+  .seg button { border: 0; border-radius: 0; padding: 7px 14px; }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button.on { background: var(--bg-elevated); color: var(--accent-ink); font-weight: 500; }
+
+  /* ---------- edit toolbar ---------- */
+  #toolbar {
+    display: none; align-items: center; gap: 3px; flex-shrink: 0;
+    padding: 7px 18px; background: var(--bg-card); border-bottom: 1px solid var(--border);
+  }
+  body[data-view="edit"] #toolbar { display: flex; }
+  #toolbar button {
+    padding: 6px 9px; min-width: 32px; border-color: transparent; font-size: 11px;
+  }
+  #toolbar button:hover { background: var(--bg-elevated); border-color: var(--border); color: var(--ink); }
+  #toolbar .sep { width: 1px; height: 18px; background: var(--border); margin: 0 6px; }
+  #toolbar .hint {
+    margin-left: auto; font-family: var(--f-mono);
+    font-size: 10px; letter-spacing: 0.06em; color: var(--ink-meta); text-transform: none;
+  }
+  #toolbar .hint b { color: var(--accent-ink); font-weight: 500; }
+
+  /* ---------- sidebar ---------- */
+  main { display: flex; flex: 1; min-height: 0; }
+  #sidebar {
+    width: var(--sidebar-w); flex-shrink: 0; display: none; flex-direction: column;
+    background: var(--bg-card); border-right: 1px solid var(--border); overflow-y: auto;
+  }
+  #sidebar.open { display: flex; }
+  .sb-section { border-bottom: 1px solid var(--border); }
+  .sb-label {
+    font-family: var(--f-mono);
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-ink); padding: 14px 16px 7px;
+  }
+  .sb-pad { padding: 0 12px 12px; display: flex; gap: 6px; }
+  #sidebar input {
+    width: 100%; font-family: var(--f-mono); font-size: 11.5px;
+    padding: 8px 10px; border-radius: var(--r-md); border: 1px solid var(--border);
+    background: var(--bg); color: var(--ink); outline: none;
+  }
+  #sidebar input::placeholder { color: var(--ink-meta); }
+  #sidebar input:focus { border-color: var(--accent); }
+  #crumb {
+    padding: 9px 16px; font-family: var(--f-mono);
+    font-size: 10.5px; color: var(--ink-meta); word-break: break-all;
+  }
+  #crumb b { color: var(--ink); font-weight: 500; }
+  .row {
+    padding: 7px 16px; cursor: pointer; font-size: 13px; line-height: 1.35;
+    display: flex; gap: 9px; align-items: baseline; border-left: 2px solid transparent;
+    color: var(--ink-dim);
+  }
+  .row:hover { background: var(--bg-elevated); color: var(--ink); }
+  .row.active { background: var(--bg-elevated); color: var(--ink); border-left-color: var(--accent); }
+  .row .ic { color: var(--ink-dimmer); flex-shrink: 0; font-size: 11px; }
+  .row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .sub {
+    font-family: var(--f-mono);
+    font-size: 10px; color: var(--ink-meta); display: block;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;
+  }
+  .note { padding: 4px 16px 14px; font-size: 11.5px; color: var(--ink-meta); line-height: 1.55; }
+  .note b { color: var(--ink-dim); font-weight: 500; }
+
+  /* ---------- the document ---------- */
+  #stage {
+    flex: 1; min-width: 0; overflow-y: auto; background: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+  }
+  :root[data-theme="manuscript"] .doc { line-height: 1.78; max-width: 40em; }
+  .doc {
+    max-width: 43em; margin: 0 auto; padding: 60px 44px 32vh;
+    font-size: 17px; line-height: 1.72; outline: none;
+    letter-spacing: -0.003em;
+  }
+  /* Instrument Serif carries the headings — the system's signature face. */
+  .doc h1, .doc h2, .doc h3 {
+    font-family: var(--f-display);
+    font-weight: var(--h-weight); letter-spacing: var(--h-track); line-height: 1.12; color: var(--ink);
+  }
+  .doc h1 { font-size: 2.6em; margin: 1.1em 0 .5em; }
+  .doc h2 { font-size: 1.85em; margin: 1.6em 0 .5em; }
+  .doc h3 { font-size: 1.4em; margin: 1.5em 0 .45em; }
+  .doc h4, .doc h5, .doc h6 {
+    font-family: var(--f-body); font-weight: 600;
+    font-size: 1em; letter-spacing: 0.01em; margin: 1.5em 0 .4em; color: var(--ink);
+  }
+  .doc h5, .doc h6 {
+    font-family: var(--f-mono);
+    font-size: .8em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  .doc > :first-child { margin-top: 0; }
+  .doc p { margin: 0 0 1.05em; color: var(--ink); }
+  .doc ul, .doc ol { margin: 0 0 1.05em; padding-left: 1.5em; }
+  .doc li { margin-bottom: .38em; }
+  .doc li::marker { color: var(--ink-dimmer); }
+  .doc li > ul, .doc li > ol { margin: .38em 0 0; }
+  .doc strong { font-weight: 600; color: var(--ink); }
+  .doc a { color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid currentColor; }
+  .doc a:hover { opacity: .75; }
+  .doc code {
+    font-family: var(--f-mono);
+    font-size: .84em; background: var(--code-bg); color: var(--ink);
+    padding: 2px 6px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  }
+  .doc pre {
+    font-family: var(--f-mono);
+    font-size: .82em; line-height: 1.6; margin: 0 0 1.05em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: var(--r-md);
+    padding: 16px 18px; overflow-x: auto;
+  }
+  .doc pre code { background: none; border: 0; padding: 0; font-size: 1em; }
+  /* Quotes get the display serif — the same move the slide templates make. */
+  .doc blockquote {
+    font-family: var(--f-display); font-style: italic;
+    font-size: 1.22em; line-height: 1.45; color: var(--ink-dim);
+    border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 0 0 1.05em;
+  }
+  .doc blockquote p { color: inherit; margin-bottom: .5em; }
+  .doc blockquote > :last-child { margin-bottom: 0; }
+  /* Stays a real table so it fills the measure; long cells wrap rather than
+     overflow, which avoids a scroll wrapper the serializer would have to know about. */
+  .doc table { border-collapse: collapse; width: 100%; margin: 0 0 1.05em; font-size: .9em; table-layout: auto; }
+  .doc td, .doc th { overflow-wrap: anywhere; }
+  .doc th, .doc td { border: 1px solid var(--border); padding: 9px 13px; text-align: left; }
+  .doc th {
+    font-family: var(--f-mono);
+    font-size: .82em; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 500; color: var(--accent-ink); background: var(--bg-card);
+  }
+  .doc hr { border: 0; border-top: 1px solid var(--border); margin: 2.2em 0; }
+  .doc img { max-width: 100%; border-radius: var(--r-md); }
+  .doc input[type=checkbox] { margin-right: .5em; accent-color: var(--accent); }
+  body[data-view="edit"] .doc { caret-color: var(--accent); }
+
+  /* Empty state: an oversized Instrument Serif mark sits behind the label, the
+     same device the slide templates use for their background marks. */
+  .empty {
+    position: relative; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; height: 62vh;
+    color: var(--ink-meta); font-family: var(--f-mono);
+    font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    text-align: center; padding: 0 24px; line-height: 2;
+  }
+  .empty::before {
+    content: '#';
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -84%);
+    font-family: var(--f-display); font-style: italic;
+    font-size: 260px; line-height: 1; color: var(--accent);
+    opacity: 0.09; pointer-events: none; user-select: none;
+  }
+  :root[data-mode="light"] .empty::before { opacity: 0.2; }
+  .empty span { position: relative; z-index: 1; margin-top: 150px; }
+  .empty b { color: var(--accent-ink); font-weight: 400; }
+
+  /* ---------- drop overlay ---------- */
+  /* ---------- sticky notes ----------
+     Five tints drawn from the brand accent's neighbourhood. Each carries its own
+     surface / edge / ink so notes stay legible in both themes. */
+  :root {
+    --st-lime:   #2A3312; --st-lime-e:   #D4FF3A; --st-lime-i:   #EAF7C4;
+    --st-amber:  #3A2A10; --st-amber-e:  #FBBF24; --st-amber-i:  #FDE9C0;
+    --st-rose:   #3A1A22; --st-rose-e:   #FB7185; --st-rose-i:   #FBD5DC;
+    --st-cyan:   #102E33; --st-cyan-e:   #22D3EE; --st-cyan-i:   #C4EEF5;
+    --st-violet: #251A3A; --st-violet-e: #A78BFA; --st-violet-i: #DDD2FB;
+  }
+  :root[data-mode="light"] {
+    --st-lime:   #F2FFC7; --st-lime-e:   #8DA80F; --st-lime-i:   #2A3312;
+    --st-amber:  #FFF3D4; --st-amber-e:  #C4901A; --st-amber-i:  #3A2A10;
+    --st-rose:   #FFE1E6; --st-rose-e:   #D9485F; --st-rose-i:   #3A1A22;
+    --st-cyan:   #D6F5FA; --st-cyan-e:   #1697AC; --st-cyan-i:   #102E33;
+    --st-violet: #EBE3FF; --st-violet-e: #6D4FD6; --st-violet-i: #251A3A;
+  }
+  /* The layer spans the whole document, not the viewport, so a note stays
+     beside the paragraph it was placed next to. */
+  #docWrap { position: relative; min-height: 100%; }
+  #stickyLayer { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+  body[data-stickies="off"] #stickyLayer { display: none; }
+  .sticky {
+    position: absolute; pointer-events: auto; display: flex; flex-direction: column;
+    border-radius: 10px; border: 1px solid var(--edge);
+    background: var(--surface); color: var(--sink);
+    min-width: 150px; min-height: 120px;
+  }
+  .sticky[data-color="lime"]   { --surface: var(--st-lime);   --edge: var(--st-lime-e);   --sink: var(--st-lime-i); }
+  .sticky[data-color="amber"]  { --surface: var(--st-amber);  --edge: var(--st-amber-e);  --sink: var(--st-amber-i); }
+  .sticky[data-color="rose"]   { --surface: var(--st-rose);   --edge: var(--st-rose-e);   --sink: var(--st-rose-i); }
+  .sticky[data-color="cyan"]   { --surface: var(--st-cyan);   --edge: var(--st-cyan-e);   --sink: var(--st-cyan-i); }
+  .sticky[data-color="violet"] { --surface: var(--st-violet); --edge: var(--st-violet-e); --sink: var(--st-violet-i); }
+  .sticky .grip {
+    display: flex; align-items: center; gap: 5px; padding: 6px 8px;
+    cursor: grab; border-bottom: 1px solid var(--edge); flex-shrink: 0;
+  }
+  .sticky .grip:active { cursor: grabbing; }
+  .sticky .swatch {
+    width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+    border: 1px solid rgba(128,128,128,.45);
+  }
+  .sticky .swatch.on { outline: 2px solid var(--edge); outline-offset: 1px; }
+  .sticky .gbtn {
+    margin-left: auto; font: inherit; font-size: 11px; line-height: 1;
+    background: transparent; border: 1px solid transparent; color: var(--sink);
+    border-radius: var(--r-sm); padding: 3px 5px; cursor: pointer; opacity: .75;
+  }
+  .sticky .gbtn:hover { opacity: 1; border-color: var(--edge); }
+  .sticky .gbtn.on { opacity: 1; background: var(--edge); color: var(--surface); }
+  .sticky .canvasWrap { position: relative; flex: 1; min-height: 0; }
+  .sticky .txt {
+    position: absolute; inset: 0; padding: 8px 10px; overflow-y: auto; outline: none;
+    font-family: var(--f-body);
+    font-size: 13px; line-height: 1.45; white-space: pre-wrap; word-break: break-word;
+  }
+  .sticky .txt:empty::before { content: attr(data-ph); opacity: .45; }
+  .sticky svg.ink { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+  .sticky[data-pen="on"] .txt { pointer-events: none; }
+  .sticky[data-pen="on"] svg.ink { cursor: crosshair; }
+  .sticky:not([data-pen="on"]) svg.ink { pointer-events: none; }
+  .sticky .rz {
+    position: absolute; right: 0; bottom: 0; width: 15px; height: 15px;
+    cursor: nwse-resize; opacity: .5;
+    background: linear-gradient(135deg, transparent 50%, var(--edge) 50%);
+    border-bottom-right-radius: 10px;
+  }
+  #stickyCount {
+    font-family: var(--f-mono); font-size: 10px;
+    background: var(--accent); color: var(--ink-inverted);
+    border-radius: var(--r-pill); padding: 1px 6px; margin-left: 5px;
+  }
+  /* theme picker */
+  .picker { position: relative; }
+  #themeName {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 7px 11px;
+  }
+  #themeName::after { content: " \25BE"; opacity: .6; }
+  #themeMenu {
+    display: none; position: absolute; right: 0; top: calc(100% + 6px); z-index: 70;
+    background: var(--bg-card); border: var(--bw) solid var(--border-bright);
+    border-radius: var(--r-md); min-width: 232px; overflow: hidden;
+  }
+  #themeMenu.open { display: block; }
+  #themeMenu button {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    border: 0; border-radius: 0; padding: 11px 13px; color: var(--ink);
+    font-family: var(--f-body); font-size: 13px; letter-spacing: 0; text-transform: none;
+  }
+  #themeMenu button + button { border-top: var(--bw) solid var(--border); }
+  #themeMenu button:hover { background: var(--bg-elevated); border-color: transparent; }
+  #themeMenu button.on { background: var(--bg-elevated); }
+  #themeMenu .chip {
+    width: 26px; height: 26px; border-radius: var(--r-sm); flex-shrink: 0;
+    display: grid; place-items: center; font-size: 13px; font-weight: 700;
+  }
+  #themeMenu .tn { display: flex; flex-direction: column; gap: 2px; }
+  #themeMenu .tn b { font-weight: 600; }
+  #themeMenu .tn span { font-size: 11px; color: var(--ink-meta); }
+  #themeMenu .tick { margin-left: auto; color: var(--accent-ink); }
+
+  #dropzone {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(15, 15, 15, 0.72); backdrop-filter: blur(3px);
+  }
+  :root[data-mode="light"] #dropzone { background: rgba(245, 245, 240, 0.78); }
+  #dropzone.on { display: flex; }
+  #dropzone div {
+    border: 1px dashed var(--accent); color: var(--accent-ink); background: var(--bg-card);
+    padding: 28px 46px; border-radius: var(--r-md);
+    font-family: var(--f-mono);
+    font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+  }
+
+  #stage::-webkit-scrollbar, #sidebar::-webkit-scrollbar { width: 10px; }
+  #stage::-webkit-scrollbar-thumb, #sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-bright); border-radius: 10px;
+  }
+  #stage::-webkit-scrollbar-track, #sidebar::-webkit-scrollbar-track { background: transparent; }
+
+  @media (max-width: 760px) {
+    .doc { padding: 40px 24px 32vh; font-size: 16px; }
+    .brand span { display: none; }
+    #toolbar .hint { display: none; }
+  }
+</style>
+
+<header>
+  <button id="pickBtn" title="Open a file (⌘O)">Open File…</button>
+  <button id="filesBtn" title="Browse, recents, open by path">☰</button>
+  <span class="brand"><i class="dot"></i><span>Draft Punk</span></span>
+  <span id="filename">No file open</span>
+  <span id="dirty">Unsaved</span>
+  <span id="status"></span>
+  <span class="seg" id="viewSeg">
+    <button data-view="read" class="on">Read</button>
+    <button data-view="edit">Edit</button>
+  </span>
+  <button id="addSticky" title="Add a sticky note (⌘J)">Sticky<span id="stickyCount" style="display:none">0</span></button>
+  <button id="toggleSticky" title="Show or hide sticky notes">👁</button>
+  <span class="picker">
+    <button id="themeName" title="Choose a theme">Draft Punk</button>
+    <div id="themeMenu"></div>
+  </span>
+  <button id="themeBtn" title="Switch between dark and light">☾</button>
+  <button id="saveBtn">Save</button>
+</header>
+
+<div id="toolbar">
+  <button data-block="h1" title="Heading 1">H1</button>
+  <button data-block="h2" title="Heading 2">H2</button>
+  <button data-block="h3" title="Heading 3">H3</button>
+  <button data-block="p" title="Body text">¶</button>
+  <span class="sep"></span>
+  <button data-cmd="bold" title="Bold (⌘B)"><b>B</b></button>
+  <button data-cmd="italic" title="Italic (⌘I)"><i>I</i></button>
+  <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+  <button data-inline="code" title="Inline code"><code style="padding:1px 3px">&lt;&gt;</code></button>
+  <span class="sep"></span>
+  <button data-cmd="insertUnorderedList" title="Bulleted list">• List</button>
+  <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+  <button data-block="blockquote" title="Quote">❝</button>
+  <button data-block="pre" title="Code block">▤</button>
+  <span class="sep"></span>
+  <button id="linkBtn" title="Add link (⌘K)">🔗</button>
+  <button id="hrBtn" title="Divider">—</button>
+  <span class="hint">Type <b># </b>, <b>- </b>, <b>&gt; </b> at the start of a line to format as you go</span>
+</div>
+
+<main>
+  <nav id="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Open a file</div>
+      <div class="note">
+        Click <b>Open File…</b> above, or <b>drag any .md file</b> onto this window.
+        Nothing is uploaded — your file is opened by the browser and never leaves your computer.
+      </div>
+    </div>
+    <div class="sb-section" style="border-bottom:0">
+      <div class="sb-label">Recent</div>
+      <div id="recentList"></div>
+    </div>
+  </nav>
+  <input id="legacyInput" type="file" accept=".md,.markdown,.mdx,.txt" style="display:none">
+  <div id="stage"><div id="docWrap"><div class="doc" id="doc"><div class="empty"><span>Drag a Markdown file here<br>or click <b>Open File</b></span></div></div><div id="stickyLayer"></div></div></div>
+  </main>
+<div id="dropzone"><div>Drop to open</div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let currentPath = null, fileHandle = null, baseline = "", homeDir = "", browseData = null;
+// YAML frontmatter is held verbatim and re-attached on save; it is never rendered
+// or serialized, so its exact formatting can't be disturbed by editing.
+let frontmatter = "";
+let docLoaded = false;
+const MD_EXT = /\.(md|markdown|mdx|txt)$/i;
+
+function tidy(p, max = 44) {
+  let s = homeDir && p.startsWith(homeDir) ? "~" + p.slice(homeDir.length) : p;
+  if (s.length <= max) return s;
+  const parts = s.split("/");
+  while (parts.length > 3 && parts.join("/").length > max) parts.splice(1, 1);
+  return parts.length > 2 ? parts[0] + "/…/" + parts.slice(-2).join("/") : s;
+}
+
+/* ============ Markdown -> HTML ============ */
+function esc(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function inlineMD(s) {
+  // One stash serves two jobs: backslash-escaped characters, and the contents of
+  // inline code spans. Both must be shielded from the emphasis rules below --
+  // without shielding, `**x**` inside backticks would render as bold and lose its
+  // asterisks when serialized back to Markdown.
+  const stash = [];
+  const keep = t => "\uE000" + (stash.push(t) - 1) + "\uE001";
+  s = s.replace(/\\([\\`*_~\[\]#>+|-])/g, (_, c) => keep(c));
+  s = s.replace(/`([^`]+)`/g, (_, c) => "<code>" + keep(c) + "</code>");
+  s = s
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img alt="$1" src="$2">')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/\*\*\*([^*]+)\*\*\*/g, "<strong><em>$1</em></strong>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
+    .replace(/(^|[\s(])_([^_\s][^_]*)_/g, "$1<em>$2</em>")
+    .replace(/~~([^~]+)~~/g, "<del>$1</del>");
+  return s.replace(/\uE000(\d+)\uE001/g, (_, i) => stash[+i]);
+}
+function renderMD(src) {
+  const lines = src.split("\n");
+  let html = "", i = 0;
+  const para = [];
+  const flush = () => { if (para.length) { html += "<p>" + inlineMD(esc(para.join(" "))) + "</p>"; para.length = 0; } };
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {
+      flush(); const info = line.replace(/^\s*```/, "").trim(); const buf = []; i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) buf.push(lines[i++]);
+      i++;
+      html += `<pre data-lang="${esc(info)}"><code>` + esc(buf.join("\n")) + "</code></pre>";
+      continue;
+    }
+    const h = line.match(/^(#{1,6})\s+(.*)/);
+    if (h) { flush(); const n = h[1].length; html += `<h${n}>` + inlineMD(esc(h[2])) + `</h${n}>`; i++; continue; }
+    if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { flush(); html += "<hr>"; i++; continue; }
+    if (/^>\s?/.test(line)) {
+      flush(); const buf = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ""));
+      html += "<blockquote>" + renderMD(buf.join("\n")) + "</blockquote>"; continue;
+    }
+    if (/^\s*([-*+]|\d+[.)])\s+/.test(line)) {
+      flush();  // must precede the list, or a paragraph above it gets moved below
+      const r = renderList(lines, i, 0); html += r.html; i = r.i; continue;
+    }
+    if (/^\|(.+)\|\s*$/.test(line) && i+1 < lines.length && /^\|[\s:|-]+\|\s*$/.test(lines[i+1])) {
+      flush();
+      const cells = l => l.trim().replace(/^\||\|$/g, "").split("|").map(c => inlineMD(esc(c.trim())));
+      html += "<table><thead><tr>" + cells(line).map(c => "<th>"+c+"</th>").join("") + "</tr></thead><tbody>";
+      i += 2;
+      while (i < lines.length && /^\|(.+)\|\s*$/.test(lines[i]))
+        html += "<tr>" + cells(lines[i++]).map(c => "<td>"+c+"</td>").join("") + "</tr>";
+      html += "</tbody></table>"; continue;
+    }
+    if (/^\s*$/.test(line)) { flush(); i++; continue; }
+    para.push(line.replace(/\s+$/, "")); i++;
+  }
+  flush();
+  return html;
+}
+// Lists, with nesting driven by leading indentation.
+function renderList(lines, i, depth) {
+  const first = lines[i].match(/^(\s*)([-*+]|\d+[.)])\s+/);
+  const baseIndent = first[1].length;
+  const ordered = /\d/.test(first[2]);
+  let html = ordered ? "<ol>" : "<ul>";
+  while (i < lines.length) {
+    const m = lines[i].match(/^(\s*)([-*+]|\d+[.)])\s+(.*)$/);
+    if (!m) break;
+    const indent = m[1].length;
+    if (indent < baseIndent) break;
+    if (indent > baseIndent) { const r = renderList(lines, i, depth+1); html = html.replace(/<\/li>$/, r.html + "</li>"); i = r.i; continue; }
+    let body = m[3]; i++;
+    // continuation lines that are indented but not list items
+    while (i < lines.length && /^\s+\S/.test(lines[i]) && !/^\s*([-*+]|\d+[.)])\s+/.test(lines[i])) body += " " + lines[i++].trim();
+    const task = body.match(/^\[([ xX])\]\s*(.*)$/);
+    html += "<li>" + (task
+      ? `<input type="checkbox" ${task[1].toLowerCase()==="x" ? "checked " : ""}> ` + inlineMD(esc(task[2]))
+      : inlineMD(esc(body))) + "</li>";
+  }
+  return { html: html + (ordered ? "</ol>" : "</ul>"), i };
+}
+
+/* ============ HTML -> Markdown ============
+   The editor edits the rendered document directly, so saving means turning the
+   DOM back into Markdown. Both directions are hand-written against the same
+   small tag vocabulary, which keeps the round-trip faithful. */
+// Inline escaping only. Text nodes are fragments of a line, not whole lines, so
+// line-leading markers must be handled once per block instead (see escLead).
+function escText(s) {
+  return s.replace(/([*`~])/g, "\\$1");
+}
+// Escape a marker only where it would actually start a block construct.
+function escLead(s) {
+  return s.replace(/^(\s*)(#{1,6}\s|>|[-+*]\s|\d+[.)]\s|\|| {0,3}```|-{3,}$|_{3,}$)/,
+                   (m, sp, tok) => sp + "\\" + tok);
+}
+function inlineOf(node) {
+  let out = "";
+  for (const n of node.childNodes) {
+    if (n.nodeType === 3) { out += escText(n.nodeValue.replace(/\n+/g, " ")); continue; }
+    if (n.nodeType !== 1) continue;
+    const t = n.tagName.toLowerCase();
+    const inner = () => inlineOf(n);
+    if (t === "br") out += "  \n";
+    else if (t === "strong" || t === "b") { const c = inner(); if (c.trim()) out += "**" + c + "**"; }
+    else if (t === "em" || t === "i") { const c = inner(); if (c.trim()) out += "*" + c + "*"; }
+    else if (t === "del" || t === "s" || t === "strike") { const c = inner(); if (c.trim()) out += "~~" + c + "~~"; }
+    else if (t === "code") out += "`" + n.textContent + "`";
+    else if (t === "a") {
+      const href = n.getAttribute("href") || "";
+      out += href ? "[" + inner() + "](" + href + ")" : inner();
+    }
+    else if (t === "img") out += "![" + (n.getAttribute("alt") || "") + "](" + (n.getAttribute("src") || "") + ")";
+    else if (t === "input") continue;               // task checkbox, handled by the list
+    else if (t === "u") out += inner();             // no Markdown equivalent
+    else out += inner();                            // span/font/div junk from contenteditable
+  }
+  return out;
+}
+function listOf(el, indent) {
+  const ordered = el.tagName.toLowerCase() === "ol";
+  const out = [];
+  let n = 1;
+  for (const li of el.children) {
+    if (li.tagName.toLowerCase() !== "li") continue;
+    const marker = ordered ? (n++) + "." : "-";
+    // Split the item into its own inline content and any nested lists.
+    const nested = [];
+    const own = document.createElement("div");
+    for (const child of li.childNodes) {
+      if (child.nodeType === 1 && /^(ul|ol)$/i.test(child.tagName)) nested.push(child);
+      else own.appendChild(child.cloneNode(true));
+    }
+    const box = li.querySelector(":scope > input[type=checkbox]");
+    const prefix = box ? (box.checked ? "[x] " : "[ ] ") : "";
+    let text = inlineOf(own).trim();
+    out.push(indent + marker + " " + prefix + text);
+    for (const sub of nested) out.push(listOf(sub, indent + "  "));
+  }
+  return out.join("\n");
+}
+function blockOf(node, ctx) {
+  if (node.nodeType === 3) {
+    const t = node.nodeValue.trim();
+    return t ? escLead(escText(t)) : null;
+  }
+  if (node.nodeType !== 1) return null;
+  const t = node.tagName.toLowerCase();
+  const h = t.match(/^h([1-6])$/);
+  if (h) { const c = inlineOf(node).trim(); return c ? "#".repeat(+h[1]) + " " + c : null; }
+  if (t === "hr") return "---";
+  if (t === "pre") {
+    const lang = node.dataset.lang || "";
+    const code = node.querySelector("code");
+    return "```" + lang + "\n" + (code ? code.textContent : node.textContent).replace(/\n$/, "") + "\n```";
+  }
+  if (t === "ul" || t === "ol") return listOf(node, "");
+  if (t === "blockquote") return serializeChildren(node).split("\n").map(l => l ? "> " + l : ">").join("\n");
+  if (t === "table") {
+    const rows = [...node.querySelectorAll("tr")];
+    if (!rows.length) return null;
+    const cellsOf = tr => [...tr.children].map(c => inlineOf(c).trim().replace(/\|/g, "\\|"));
+    const head = cellsOf(rows[0]);
+    const lines = ["| " + head.join(" | ") + " |", "|" + head.map(() => "---").join("|") + "|"];
+    for (const tr of rows.slice(1)) lines.push("| " + cellsOf(tr).join(" | ") + " |");
+    return lines.join("\n");
+  }
+  if (t === "br") return null;
+  // p, div, and anything else contenteditable invented
+  const c = inlineOf(node).trim();
+  return c ? escLead(c) : null;
+}
+function serializeChildren(root) {
+  const out = [];
+  for (const n of root.childNodes) {
+    const b = blockOf(n, root);
+    if (b !== null && b !== "") out.push(b);
+  }
+  return out.join("\n\n");
+}
+function toMarkdown() {
+  const doc = $("doc");
+  if (doc.querySelector(".empty")) return frontmatter;
+  return frontmatter + serializeChildren(doc).replace(/\n{3,}/g, "\n\n").trim() + "\n";
+}
+// Split off a leading YAML frontmatter block, if present.
+function splitFrontmatter(src) {
+  const m = src.match(/^---\r?\n[\s\S]*?\r?\n---[ \t]*\r?\n?/);
+  return m ? { fm: m[0].replace(/\r?\n?$/, "\n") + "\n", body: src.slice(m[0].length).replace(/^\s*\n/, "") }
+           : { fm: "", body: src };
+}
+
+/* ============ document state ============ */
+function refreshDirty() {
+  $("dirty").style.display = docLoaded && toMarkdown() !== baseline ? "inline-block" : "none";
+}
+function loadDoc(markdown) {
+  const { fm, body } = splitFrontmatter(markdown);
+  frontmatter = fm;
+  $("doc").innerHTML = renderMD(body) || "<p><br></p>";
+  // Compare against the round-tripped form, so normalisation alone never reads as an edit.
+  baseline = toMarkdown();
+  refreshDirty();
+}
+function mount(label, content, { path = null, handle = null } = {}) {
+  currentPath = path; fileHandle = handle; docLoaded = true;
+  loadDoc(content);
+  $("filename").textContent = path ? tidy(path, 60) : label;
+  $("filename").title = path || label;
+  $("status").textContent = "";
+  document.title = label.split("/").pop() + " — Draft Punk";
+  $("sidebar").classList.remove("open");
+  $("stage").scrollTop = 0;
+  loadStickies();
+}
+function confirmDiscard() {
+  return !docLoaded || toMarkdown() === baseline ||
+    confirm("You have unsaved changes. Discard them?");
+}
+
+/* ============ opening ============
+   Everything runs in the browser. Files are reached through the File System Access
+   API, which returns a handle we can write back to. Browsers without it (Safari,
+   Firefox) fall back to a plain file input and can still read and render. */
+const CAN_PICK = !!window.showOpenFilePicker;
+
+async function pickFile() {
+  if (!confirmDiscard()) return;
+  if (!CAN_PICK) { $("legacyInput").click(); return; }
+  let handle;
+  try {
+    [handle] = await window.showOpenFilePicker({ types: [{ description: "Markdown",
+      accept: { "text/markdown": [".md", ".markdown", ".mdx"], "text/plain": [".txt"] } }] });
+  } catch (e) { return; }
+  await openHandle(handle);
+}
+
+async function openHandle(handle) {
+  const f = await handle.getFile();
+  mount(f.name, await f.text(), { handle });
+  rememberFile(handle);
+}
+
+async function openPlainFile(file) {
+  if (!confirmDiscard()) return;
+  mount(file.name, await file.text(), {});
+  $("status").textContent = "read-only \u2014 Save downloads a copy";
+}
+
+/* Recent files. File handles can be kept in IndexedDB and reopened later, so this
+   really reopens the file on disk rather than just remembering its name. */
+const DB = "draftpunk", STORE = "recent";
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore(STORE, { keyPath: "name" });
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function rememberFile(handle) {
+  if (!CAN_PICK) return;
+  try {
+    const db = await idb();
+    const tx = db.transaction(STORE, "readwrite");
+    tx.objectStore(STORE).put({ name: handle.name, handle, at: Date.now() });
+    tx.oncomplete = loadRecent;
+  } catch (e) {}
+}
+async function recentList() {
+  try {
+    const db = await idb();
+    return await new Promise(res => {
+      const req = db.transaction(STORE, "readonly").objectStore(STORE).getAll();
+      req.onsuccess = () => res((req.result || []).sort((x, y) => y.at - x.at).slice(0, 10));
+      req.onerror = () => res([]);
+    });
+  } catch (e) { return []; }
+}
+async function openRecent(name) {
+  if (!confirmDiscard()) return;
+  const hit = (await recentList()).find(i => i.name === name);
+  if (!hit) return;
+  try {
+    if (await hit.handle.queryPermission({ mode: "readwrite" }) !== "granted" &&
+        await hit.handle.requestPermission({ mode: "readwrite" }) !== "granted") {
+      $("status").textContent = "permission denied"; return;
+    }
+    await openHandle(hit.handle);
+  } catch (e) { $("status").textContent = "file moved or deleted"; }
+}
+
+/* ============ saving ============ */
+async function save() {
+  if (!docLoaded) { $("status").textContent = "No file open"; return; }
+  const md = toMarkdown();
+  if (md === baseline) { $("status").textContent = "No changes"; return; }
+  $("status").textContent = "Saving\u2026";
+  if (fileHandle) {
+    try {
+      if (await fileHandle.queryPermission({ mode: "readwrite" }) !== "granted" &&
+          await fileHandle.requestPermission({ mode: "readwrite" }) !== "granted") {
+        $("status").textContent = "Write permission denied"; return;
+      }
+      const w = await fileHandle.createWritable();
+      await w.write(md); await w.close();
+    } catch (e) { $("status").textContent = "Error: " + e.message; return; }
+    baseline = md;
+    $("status").textContent = "Saved " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    refreshDirty();
+    return;
+  }
+  // No write access: hand the reader a copy instead of failing.
+  const name = ($("filename").textContent || "untitled.md").split("/").pop();
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([md], { type: "text/markdown" }));
+  link.download = /\.(md|markdown|mdx|txt)$/i.test(name) ? name : name + ".md";
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+  baseline = md;
+  $("status").textContent = "downloaded a copy";
+  refreshDirty();
+}
+
+/* ============ sidebar ============ */
+async function loadRecent() {
+  const items = CAN_PICK ? await recentList() : [];
+  $("recentList").innerHTML = items.length
+    ? items.map(f => '<div class="row" data-recent="' + esc(f.name) + '">' +
+        '<span class="ic">○</span><span class="nm">' + esc(f.name) + '</span></div>').join("")
+    : '<div class="note">Files you open will show up here.</div>';
+}
+
+/* ============ theme ============
+   Two axes: THEMES[] picks the identity, mode picks dark or light within it.
+   Both persist; first run follows the system appearance. */
+const THEMES = [
+  { id: "punk",      name: "Draft Punk", note: "Electric lime · Instrument Serif", swatch: "#D4FF3A", ink: "#0F0F0F" },
+  { id: "blueprint", name: "Blueprint",  note: "Electric blue · Space Grotesk",    swatch: "#2B4CFF", ink: "#FFFFFF" },
+  { id: "manuscript", name: "Manuscript", note: "Warm paper · Fraunces + Source Serif", swatch: "#B4531F", ink: "#FBF6EC" },
+];
+function currentTheme() { return document.documentElement.dataset.theme || "punk"; }
+function setTheme(id) {
+  if (!THEMES.some(t => t.id === id)) id = "punk";
+  document.documentElement.dataset.theme = id;
+  localStorage.setItem("dp-theme", id);
+  const t = THEMES.find(x => x.id === id);
+  $("themeName").firstChild ? $("themeName").firstChild.nodeValue = t.name : $("themeName").textContent = t.name;
+  $("themeName").textContent = t.name;
+  renderThemeMenu();
+}
+function setMode(m) {
+  document.documentElement.dataset.mode = m;
+  localStorage.setItem("dp-mode", m);
+  $("themeBtn").textContent = m === "dark" ? "\u263E" : "\u2600";
+  $("themeBtn").title = m === "dark" ? "Switch to light" : "Switch to dark";
+}
+function renderThemeMenu() {
+  const cur = currentTheme();
+  $("themeMenu").innerHTML = THEMES.map(t =>
+    '<button data-theme-id="' + t.id + '"' + (t.id === cur ? ' class="on"' : '') + '>' +
+      '<span class="chip" style="background:' + t.swatch + ';color:' + t.ink + '">Aa</span>' +
+      '<span class="tn"><b>' + t.name + '</b><span>' + t.note + '</span></span>' +
+      (t.id === cur ? '<span class="tick">\u2713</span>' : '') +
+    '</button>').join("");
+}
+$("themeName").addEventListener("click", e => {
+  e.stopPropagation(); $("themeMenu").classList.toggle("open");
+});
+$("themeMenu").addEventListener("click", e => {
+  const b = e.target.closest("button[data-theme-id]"); if (!b) return;
+  setTheme(b.dataset.themeId);
+  $("themeMenu").classList.remove("open");
+});
+document.addEventListener("click", () => $("themeMenu").classList.remove("open"));
+$("themeBtn").addEventListener("click", () =>
+  setMode(document.documentElement.dataset.mode === "dark" ? "light" : "dark"));
+
+setTheme(localStorage.getItem("dp-theme") || "punk");
+setMode(localStorage.getItem("dp-mode") ||
+  (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+
+/* ============ view mode ============ */
+function setView(v) {
+  document.body.dataset.view = v;
+  const editing = v === "edit";
+  $("doc").contentEditable = editing ? "true" : "false";
+  [...$("viewSeg").children].forEach(b => b.classList.toggle("on", b.dataset.view === v));
+  localStorage.setItem("mdview", v);
+  if (editing) $("doc").focus();
+}
+
+/* ============ editing behaviour ============ */
+const doc = $("doc");
+doc.addEventListener("input", refreshDirty);
+
+// Paste as plain text, so pasted web content can't inject unsupported markup.
+doc.addEventListener("paste", e => {
+  if (document.body.dataset.view !== "edit") return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+  document.execCommand("insertText", false, text);
+});
+
+function currentBlock() {
+  let n = window.getSelection().anchorNode;
+  while (n && n !== doc && !(n.nodeType === 1 && /^(P|H[1-6]|LI|BLOCKQUOTE|PRE|DIV|TD|TH)$/.test(n.tagName)))
+    n = n.parentNode;
+  return n && n !== doc ? n : null;
+}
+function setBlock(tag) {
+  document.execCommand("formatBlock", false, tag);
+  refreshDirty();
+}
+function wrapInlineCode() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount || sel.isCollapsed) return;
+  const text = sel.toString();
+  const code = document.createElement("code");
+  code.textContent = text;
+  const r = sel.getRangeAt(0);
+  r.deleteContents(); r.insertNode(code);
+  r.setStartAfter(code); r.collapse(true);
+  sel.removeAllRanges(); sel.addRange(r);
+  refreshDirty();
+}
+
+// Markdown shortcuts: "# ", "- ", "> " etc. at the start of a line.
+doc.addEventListener("keydown", e => {
+  if (document.body.dataset.view !== "edit") return;
+  if (e.key !== " ") return;
+  const sel = window.getSelection();
+  if (!sel.isCollapsed) return;
+  const block = currentBlock();
+  if (!block || /^(PRE|LI)$/.test(block.tagName)) return;
+  const text = block.textContent.slice(0, sel.anchorOffset);
+  const rules = { "#":"h1", "##":"h2", "###":"h3", "####":"h4", ">":"blockquote", "```":"pre" };
+  if (rules[text]) {
+    e.preventDefault();
+    block.textContent = "";
+    setBlock(rules[text]);
+  } else if (text === "-" || text === "*") {
+    e.preventDefault(); block.textContent = "";
+    document.execCommand("insertUnorderedList"); refreshDirty();
+  } else if (/^\d+\.$/.test(text)) {
+    e.preventDefault(); block.textContent = "";
+    document.execCommand("insertOrderedList"); refreshDirty();
+  }
+});
+
+$("toolbar").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  doc.focus();
+  if (b.dataset.cmd) { document.execCommand(b.dataset.cmd); refreshDirty(); }
+  else if (b.dataset.block) setBlock(b.dataset.block);
+  else if (b.dataset.inline === "code") wrapInlineCode();
+});
+$("linkBtn").addEventListener("click", () => {
+  const url = prompt("Link URL:"); if (url) { document.execCommand("createLink", false, url); refreshDirty(); }
+});
+$("hrBtn").addEventListener("click", () => {
+  document.execCommand("insertHTML", false, "<hr><p><br></p>"); refreshDirty();
+});
+
+/* ============ sticky notes ============
+   Notes belong to a document and are stored server-side keyed by its path, so
+   they survive reloads without leaving sidecar files in the user's folders.
+   Each note carries text and a scribble layer; the pen writes SVG paths. */
+const ST_COLORS = ["lime", "amber", "rose", "cyan", "violet"];
+let stickies = [], stickyKey = null, stickySaveTimer = null;
+
+function stickyDocKey() {
+  // No absolute paths without a server, so notes are keyed by file name.
+  const n = $("filename").textContent;
+  return n && n !== "No file open" ? "dp:stickies:" + n : null;
+}
+function newSticky() {
+  const wrap = $("docWrap"), stage = $("stage");
+  return {
+    id: "s" + Date.now().toString(36) + Math.floor(performance.now() % 1000),
+    x: Math.round(Math.max(20, wrap.clientWidth - 300 - (stickies.length % 4) * 34)),
+    y: Math.round(stage.scrollTop + 80 + (stickies.length % 4) * 54),
+    w: 220, h: 180,
+    color: ST_COLORS[stickies.length % ST_COLORS.length],
+    text: "", strokes: []
+  };
+}
+function queueStickySave() {
+  clearTimeout(stickySaveTimer);
+  stickySaveTimer = setTimeout(saveStickies, 500);
+}
+function saveStickies() {
+  if (!stickyKey) return;
+  try {
+    if (stickies.length) localStorage.setItem(stickyKey, JSON.stringify(stickies));
+    else localStorage.removeItem(stickyKey);
+  } catch (e) { /* private mode or quota — notes stay on screen regardless */ }
+}
+function loadStickies() {
+  stickyKey = stickyDocKey();
+  $("stickyLayer").innerHTML = "";
+  stickies = [];
+  if (!stickyKey) { updateStickyCount(); return; }
+  try { stickies = JSON.parse(localStorage.getItem(stickyKey) || "[]"); }
+  catch (e) { stickies = []; }
+  stickies.forEach(drawSticky);
+  updateStickyCount();
+}
+function updateStickyCount() {
+  const el = $("stickyCount");
+  el.textContent = stickies.length;
+  el.style.display = stickies.length ? "inline-block" : "none";
+}
+
+function drawSticky(note) {
+  const el = document.createElement("div");
+  el.className = "sticky";
+  el.dataset.id = note.id;
+  el.dataset.color = note.color;
+  el.style.cssText = `left:${note.x}px; top:${note.y}px; width:${note.w}px; height:${note.h}px;`;
+  el.innerHTML =
+    '<div class="grip">' +
+      ST_COLORS.map(c => `<span class="swatch${c === note.color ? " on" : ""}" data-c="${c}" ` +
+        `style="background: var(--st-${c}); border-color: var(--st-${c}-e)" title="${c}"></span>`).join("") +
+      '<button class="gbtn pen" title="Scribble">✎</button>' +
+      '<button class="gbtn clr" title="Clear scribble">⌫</button>' +
+      '<button class="gbtn del" title="Delete note">✕</button>' +
+    '</div>' +
+    '<div class="canvasWrap">' +
+      '<div class="txt" contenteditable="true" data-ph="note…"></div>' +
+      '<svg class="ink" preserveAspectRatio="none"></svg>' +
+    '</div>' +
+    '<div class="rz"></div>';
+  const txt = el.querySelector(".txt");
+  txt.textContent = note.text || "";
+  $("stickyLayer").appendChild(el);
+  paintStrokes(el, note);
+  wireSticky(el, note);
+}
+
+function paintStrokes(el, note) {
+  const svg = el.querySelector("svg.ink");
+  svg.setAttribute("viewBox", `0 0 ${note.w} ${note.h}`);
+  svg.innerHTML = (note.strokes || []).map(st =>
+    `<path d="${st.d}" fill="none" stroke="${st.c}" stroke-width="${st.w}" ` +
+    `stroke-linecap="round" stroke-linejoin="round"/>`).join("");
+}
+
+function wireSticky(el, note) {
+  const txt = el.querySelector(".txt");
+  const svg = el.querySelector("svg.ink");
+
+  txt.addEventListener("input", () => { note.text = txt.textContent; queueStickySave(); });
+
+  el.querySelector(".grip").addEventListener("pointerdown", e => {
+    if (e.target.closest(".swatch") || e.target.closest(".gbtn")) return;
+    e.preventDefault();
+    const sx = e.clientX, sy = e.clientY, ox = note.x, oy = note.y;
+    const move = ev => {
+      const wrap = $("docWrap");
+      note.x = Math.max(0, Math.min(wrap.clientWidth - 60, ox + ev.clientX - sx));
+      note.y = Math.max(0, Math.min(wrap.offsetHeight - 40, oy + ev.clientY - sy));
+      el.style.left = note.x + "px"; el.style.top = note.y + "px";
+    };
+    const up = () => {
+      removeEventListener("pointermove", move); removeEventListener("pointerup", up);
+      queueStickySave();
+    };
+    addEventListener("pointermove", move); addEventListener("pointerup", up);
+  });
+
+  el.querySelector(".rz").addEventListener("pointerdown", e => {
+    e.preventDefault(); e.stopPropagation();
+    const sx = e.clientX, sy = e.clientY, ow = note.w, oh = note.h;
+    const move = ev => {
+      note.w = Math.max(150, ow + ev.clientX - sx);
+      note.h = Math.max(120, oh + ev.clientY - sy);
+      el.style.width = note.w + "px"; el.style.height = note.h + "px";
+      svg.setAttribute("viewBox", `0 0 ${note.w} ${note.h}`);
+    };
+    const up = () => {
+      removeEventListener("pointermove", move); removeEventListener("pointerup", up);
+      queueStickySave();
+    };
+    addEventListener("pointermove", move); addEventListener("pointerup", up);
+  });
+
+  el.querySelector(".grip").addEventListener("click", e => {
+    const sw = e.target.closest(".swatch");
+    if (sw) {
+      note.color = sw.dataset.c; el.dataset.color = note.color;
+      el.querySelectorAll(".swatch").forEach(x => x.classList.toggle("on", x.dataset.c === note.color));
+      // Re-ink existing strokes so they keep contrast against the new surface.
+      const edge = getComputedStyle(el).getPropertyValue("--edge").trim();
+      (note.strokes || []).forEach(st => st.c = edge);
+      paintStrokes(el, note);
+      queueStickySave(); return;
+    }
+    if (e.target.closest(".pen")) {
+      const on = el.dataset.pen === "on";
+      el.dataset.pen = on ? "" : "on";
+      e.target.closest(".pen").classList.toggle("on", !on);
+      return;
+    }
+    if (e.target.closest(".clr")) { note.strokes = []; paintStrokes(el, note); queueStickySave(); return; }
+    if (e.target.closest(".del")) {
+      stickies = stickies.filter(n => n.id !== note.id);
+      el.remove(); updateStickyCount(); queueStickySave(); return;
+    }
+  });
+
+  // Scribbling. Coordinates are in the note's own space, so strokes scale on resize.
+  let drawing = null;
+  svg.addEventListener("pointerdown", e => {
+    if (el.dataset.pen !== "on") return;
+    e.preventDefault();
+    svg.setPointerCapture(e.pointerId);
+    const r = svg.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width * note.w;
+    const py = (e.clientY - r.top) / r.height * note.h;
+    const edge = getComputedStyle(el).getPropertyValue("--edge").trim();
+    drawing = { d: `M ${px.toFixed(1)} ${py.toFixed(1)}`, c: edge, w: 2 };
+    note.strokes = note.strokes || [];
+    note.strokes.push(drawing);
+  });
+  svg.addEventListener("pointermove", e => {
+    if (!drawing) return;
+    const r = svg.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width * note.w;
+    const py = (e.clientY - r.top) / r.height * note.h;
+    drawing.d += ` L ${px.toFixed(1)} ${py.toFixed(1)}`;
+    paintStrokes(el, note);
+  });
+  const endDraw = () => { if (drawing) { drawing = null; queueStickySave(); } };
+  svg.addEventListener("pointerup", endDraw);
+  svg.addEventListener("pointercancel", endDraw);
+}
+
+$("addSticky").addEventListener("click", () => {
+  if (!stickyDocKey()) { $("status").textContent = "Open a file first"; return; }
+  if (document.body.dataset.stickies === "off") document.body.dataset.stickies = "on";
+  stickyKey = stickyDocKey();
+  const n = newSticky();
+  stickies.push(n); drawSticky(n); updateStickyCount(); queueStickySave();
+  const el = $("stickyLayer").lastElementChild.querySelector(".txt");
+  if (el) el.focus();
+});
+$("toggleSticky").addEventListener("click", () => {
+  const off = document.body.dataset.stickies === "off";
+  document.body.dataset.stickies = off ? "on" : "off";
+  $("toggleSticky").textContent = off ? "👁" : "🙈";
+});
+document.body.dataset.stickies = "on";
+
+/* ============ drag and drop ============ */
+let dragDepth = 0;
+const hasFiles = e => [...(e.dataTransfer.types || [])].includes("Files");
+window.addEventListener("dragenter", e => {
+  if (!hasFiles(e)) return; e.preventDefault(); dragDepth++; $("dropzone").classList.add("on");
+});
+window.addEventListener("dragover", e => {
+  if (hasFiles(e)) { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; }
+});
+window.addEventListener("dragleave", () => {
+  if (--dragDepth <= 0) { dragDepth = 0; $("dropzone").classList.remove("on"); }
+});
+window.addEventListener("drop", async e => {
+  if (!hasFiles(e)) return;
+  e.preventDefault(); dragDepth = 0; $("dropzone").classList.remove("on");
+  if (!confirmDiscard()) return;
+  const item = e.dataTransfer.items && e.dataTransfer.items[0];
+  if (item && item.getAsFileSystemHandle) {
+    try {
+      const h = await item.getAsFileSystemHandle();
+      if (h && h.kind === "file") {
+        if (!MD_EXT.test(h.name)) { $("status").textContent = "Not a Markdown file: " + h.name; return; }
+        return void await openHandle(h);
+      }
+    } catch (err) { /* fall through */ }
+  }
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  if (!MD_EXT.test(f.name)) { $("status").textContent = "Not a Markdown file: " + f.name; return; }
+  mount(f.name, await f.text());
+  const found = await locate(f.name, f.size);
+  if (found) { currentPath = found; $("filename").textContent = tidy(found, 60);
+    $("filename").title = found; loadRecent(); }
+  else $("status").textContent = "Opened read-only (path unknown)";
+});
+
+/* ============ wiring ============ */
+$("viewSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (b) setView(b.dataset.view);
+});
+$("pickBtn").addEventListener("click", pickFile);
+$("saveBtn").addEventListener("click", save);
+$("filesBtn").addEventListener("click", () => {
+  const open = $("sidebar").classList.toggle("open");
+  if (open) loadRecent();
+});
+$("sidebar").addEventListener("click", e => {
+  const row = e.target.closest(".row");
+  if (row && row.dataset.recent) openRecent(row.dataset.recent);
+});
+$("legacyInput").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0];
+  if (f) openPlainFile(f);
+  e.target.value = "";
+});
+document.addEventListener("keydown", e => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (!mod) return;
+  if (e.key === "s") { e.preventDefault(); save(); }
+  else if (e.key === "o") { e.preventDefault(); pickFile(); }
+  else if (e.key === "e") { e.preventDefault(); setView(document.body.dataset.view === "edit" ? "read" : "edit"); }
+  else if (e.key === "k" && document.body.dataset.view === "edit") { e.preventDefault(); $("linkBtn").click(); }
+  else if (e.key === "j") { e.preventDefault(); $("addSticky").click(); }
+});
+window.addEventListener("beforeunload", e => {
+  if (docLoaded && toMarkdown() !== baseline) e.preventDefault();
+});
+
+// Tell people up front if their browser can't write files back.
+if (!CAN_PICK) {
+  $("status").textContent = "read-only browser";
+  $("status").title = "Chrome, Edge, Arc or Brave can save straight back to the file. " +
+                      "Here, Save downloads a copy instead.";
+}
+
+setView(localStorage.getItem("mdview") === "edit" ? "edit" : "read");
+loadRecent();
+if (!CAN_PICK) $("sidebar").classList.add("open");
+</script>
