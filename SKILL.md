@@ -16,29 +16,39 @@ Serves a formatted, editable view of any Markdown file on the local disk at
 
 ## Opening a file
 
-**1. Is the server already running?**
+**If `Draft Punk.app` is installed (macOS), use it — one command does everything:**
 
 ```bash
+open -a "Draft Punk.app" "/abs/path/to/file.md"
+```
+
+It starts the server if needed and opens that file. Prefer this: on macOS the app
+owns the permission grant that lets the server read files in Documents, Desktop
+and Downloads.
+
+**Otherwise**, start the server and open the URL:
+
+```bash
+# 1. already running?
 curl -s -o /dev/null --max-time 1 http://localhost:8787/
-```
 
-**2. If not, start it** from this skill's directory:
+# 2. if not, start it — see the macOS warning below
+nohup python3 server.py > server.log 2>&1 &   # give it ~1.5s to bind
 
-```bash
-nohup python3 server.py > server.log 2>&1 &
-```
-
-Give it ~1.5s to bind the port.
-
-**3. Open the file**, URL-encoding the absolute path:
-
-```bash
+# 3. open the file
 ENC=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1]))' "/abs/path/to/file.md")
 open "http://localhost:8787/?file=$ENC"      # macOS
 xdg-open "http://localhost:8787/?file=$ENC"  # Linux
 ```
 
 Omit `?file=` to open the editor's own file picker.
+
+> **macOS permissions.** A server started detached from an agent's shell can lose
+> access to protected folders (Documents, Desktop, Downloads) and then fail every
+> read with `PermissionError: [Errno 1] Operation not permitted` — while still
+> holding the port, so it looks alive. Use the `open -a` form above, or have the
+> user run `python3 server.py` in the foreground from their own Terminal, so a
+> real app owns the permission. This does not affect Linux.
 
 ## HTTP API
 
